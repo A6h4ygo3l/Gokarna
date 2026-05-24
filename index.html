@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gokarna Boys Trip 2026 | Ultimate Long Weekend Logger</title>
+  <meta name="description" content="Live 4-day road trip logger from Pune to Gokarna. Edit timings, log location expenses, and pack luggage items in real-time.">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Floating Ambient Glow Mesh Background -->
+  <div class="bg-mesh-container">
+    <div class="bg-blob blob1"></div>
+    <div class="bg-blob blob2"></div>
+    <div class="bg-blob blob3"></div>
+  </div>
+
+  <div class="app-wrapper">
+
+    <!-- 1. Header Block -->
+    <header class="app-header glass-panel">
+      <div class="header-left">
+        <div class="trip-title-wrapper">
+          <span class="trip-badge">Squad Mode</span>
+          <h1>GOKARNA ROAD TRIP 2026</h1>
+        </div>
+        <p><i data-lucide="calendar"></i> May 30 - June 2, 2026 &nbsp;|&nbsp; <i data-lucide="map-pin"></i> Pune &rarr; Gokarna</p>
+      </div>
+
+      <div class="header-right">
+        <!-- Countdown Widget -->
+        <div class="countdown-box" title="Countdown to departure!">
+          <i data-lucide="clock" class="countdown-icon"></i>
+          <span class="countdown-timer" id="countdown-value">Loading...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. Quick Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card glass-panel">
+        <div class="stat-icon-box"><i data-lucide="compass"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">4 Days</span>
+          <span class="stat-label">Duration</span>
+        </div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-icon-box"><i data-lucide="milestone"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">504 km</span>
+          <span class="stat-label">Distance (One Way)</span>
+        </div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-icon-box"><i data-lucide="wallet"></i></div>
+        <div class="stat-info">
+          <span class="stat-value" id="stats-total-budget">₹0</span>
+          <span class="stat-label">Total Spent</span>
+        </div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-icon-box"><i data-lucide="check-circle-2"></i></div>
+        <div class="stat-info">
+          <span class="stat-value" id="stats-packed-status">0 / 0</span>
+          <span class="stat-label">Luggage Packed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Navigation Tabs -->
+    <nav class="tabs-navigation glass-panel">
+      <button class="tab-btn active" data-tab="itinerary"><i data-lucide="map"></i> Itinerary & Expenses</button>
+      <button class="tab-btn" data-tab="checklist"><i data-lucide="check-square"></i> Packing Checklist</button>
+      <button class="btn btn-sm btn-primary" id="share-trip-btn" style="margin-left: auto;" title="Copy shareable link"><i data-lucide="share-2"></i> Share Link</button>
+    </nav>
+
+    <!-- 4. SPA Main Content Panels -->
+    <main class="spa-content-area">
+
+      <!-- TAB 1: DYNAMIC ITINERARY TIMELINE -->
+      <section class="tab-content active" id="tab-itinerary">
+        <div class="itinerary-container" id="itinerary-list">
+          <!-- Dynamically populated by app.js -->
+          <div style="text-align: center; color: var(--text-muted); padding: 60px 0;">Loading itinerary timeline...</div>
+        </div>
+      </section>
+
+      <!-- TAB 2: PACKING CHECKLIST -->
+      <section class="tab-content" id="tab-checklist">
+        <div class="checklist-layout">
+          <!-- Sidebar Filters -->
+          <div class="checklist-sidebar">
+            <div class="filter-group glass-panel" style="padding: 16px;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 12px; display: block;">Categories</span>
+              <button class="btn filter-btn active" data-category="All"><i data-lucide="layers"></i> All Items</button>
+              <button class="btn filter-btn" data-category="Essentials"><i data-lucide="shield-check"></i> Essentials</button>
+              <button class="btn filter-btn" data-category="Beachwear"><i data-lucide="umbrella"></i> Beachwear</button>
+              <button class="btn filter-btn" data-category="Road Trip"><i data-lucide="car"></i> Road Trip</button>
+              <button class="btn filter-btn" data-category="Entertainment"><i data-lucide="music"></i> Entertainment</button>
+            </div>
+            
+            <div class="glass-panel" style="padding: 16px; font-size: 0.85rem; color: var(--text-secondary);">
+              <i data-lucide="info" style="color: var(--neon-cyan); float: left; margin-right: 8px;"></i>
+              Check items off as you pack them. Every modification is saved locally so you can trace your packing progress during the trip.
+            </div>
+          </div>
+
+          <!-- Main Checklist list -->
+          <div class="checklist-main glass-panel">
+            <form class="checklist-add-form" id="checklist-form">
+              <input type="text" id="checklist-input" placeholder="Add custom item (e.g. Sunglasses)..." required>
+              <select id="checklist-category-select">
+                <option value="Essentials">Essentials</option>
+                <option value="Beachwear">Beachwear</option>
+                <option value="Road Trip">Road Trip</option>
+                <option value="Entertainment">Entertainment</option>
+              </select>
+              <button type="submit" class="btn btn-primary"><i data-lucide="plus"></i> Add Item</button>
+            </form>
+
+            <div class="checklist-items" id="checklist-render-list">
+              <!-- Dynamically populated by app.js -->
+              <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">Loading checklist items...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL: EDIT MILESTONE DETAILS -->
+  <div class="modal-overlay" id="edit-milestone-modal">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3>Edit Timeline Milestone</h3>
+        <button class="modal-close-btn" id="close-edit-modal">&times;</button>
+      </div>
+      <form id="edit-milestone-form" style="display: flex; flex-direction: column; gap: 16px;">
+        <input type="hidden" id="edit-day-num">
+        <input type="hidden" id="edit-milestone-id">
+        <input type="hidden" id="edit-mode" value="edit">
+        
+        <div class="config-form-group">
+          <label for="edit-time">Timing / Hour</label>
+          <input type="text" id="edit-time" class="form-control" placeholder="e.g. 04:00 AM" required>
+        </div>
+        <div class="config-form-group">
+          <label for="edit-title">Milestone Title</label>
+          <input type="text" id="edit-title" class="form-control" placeholder="e.g. Roll Out from Pune" required>
+        </div>
+        <div class="config-form-group">
+          <label for="edit-desc">Description / Plan</label>
+          <textarea id="edit-desc" class="form-control" rows="4" placeholder="Describe the plan, route, or check-in details..." required style="resize: vertical; min-height: 80px;"></textarea>
+        </div>
+        <div class="config-form-group">
+          <label for="edit-tag">Activity Category Tag</label>
+          <input type="text" id="edit-tag" class="form-control" placeholder="e.g. Roadtrip, Food, Beach Vibe, Hotel" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;"><i data-lucide="check"></i> Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD EXPENSE TO LOCATION -->
+  <div class="modal-overlay" id="add-expense-modal">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3>Add Expense at <span id="expense-modal-location-name" style="color: var(--neon-cyan);">this location</span></h3>
+        <button class="modal-close-btn" id="close-expense-modal">&times;</button>
+      </div>
+      <form id="expense-add-form" style="display: flex; flex-direction: column; gap: 16px;">
+        <input type="hidden" id="expense-day-num">
+        <input type="hidden" id="expense-milestone-id">
+
+        <div class="config-form-group">
+          <label for="exp-amount">Expense Amount (₹)</label>
+          <input type="number" id="exp-amount" class="form-control" placeholder="e.g. 850" min="1" required>
+        </div>
+        
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          Adding an expense will attach it to this specific itinerary stop, update the timeline badge, and recalculate your overall trip spend automatically.
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;"><i data-lucide="plus"></i> Log Expense</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lucide Icons & App Script -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

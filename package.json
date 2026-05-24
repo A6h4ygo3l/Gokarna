@@ -1,0 +1,13 @@
+{
+  "name": "jarvis-hud-agent",
+  "version": "1.0.0",
+  "description": "A holographic Jarvis-like agent dashboard built with HTML5, CSS3, and ES6 Javascript modules featuring AI chatbot integrations.",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}
