@@ -73,6 +73,9 @@ let itinerary = [];
 let checklist = [];
 let activeCategoryFilter = "All";
 const expandedDays = new Set([1]); // Day 1 expanded by default
+// Firestore sync helpers
+let lastLocalUpdate = 0;
+let fbDocRef = null;
 
 // 1. Data Store Drivers
 function loadData() {
@@ -81,6 +84,7 @@ function loadData() {
     itinerary = JSON.parse(storedItinerary);
   } else {
     itinerary = [...DEFAULT_ITINERARY];
+    // persist initial default locally; cloud sync will pick this up if enabled
     saveItinerary();
   }
 
@@ -93,16 +97,90 @@ function loadData() {
   }
 }
 
-function saveItinerary() {
-  localStorage.setItem("gokarna_itinerary_data", JSON.stringify(itinerary));
+async function saveItinerary() {
+  // persist locally first
+  try {
+    localStorage.setItem("gokarna_itinerary_data", JSON.stringify(itinerary));
+  } catch (e) {
+    console.warn('localStorage unavailable for itinerary', e);
+  }
+
+  // attempt cloud sync if Firebase is initialized
+  const updatedAt = Date.now();
+  lastLocalUpdate = updatedAt;
+  try {
+    if (window._FB && window._FB.db && window._FB.setDoc && window._FB.doc) {
+      const ref = window._FB.doc(window._FB.db, "trips", "gokarna");
+      fbDocRef = ref;
+      await window._FB.setDoc(ref, { itinerary, checklist, updatedAt }, { merge: true });
+    }
+  } catch (err) {
+    console.warn('Failed to save itinerary to Firestore, falling back to localStorage', err);
+  }
+
   renderItinerary();
   updateTotalExpenseStat();
 }
 
-function saveChecklist() {
-  localStorage.setItem("gokarna_checklist_data", JSON.stringify(checklist));
+async function saveChecklist() {
+  try {
+    localStorage.setItem("gokarna_checklist_data", JSON.stringify(checklist));
+  } catch (e) {
+    console.warn('localStorage unavailable for checklist', e);
+  }
+
+  const updatedAt = Date.now();
+  lastLocalUpdate = updatedAt;
+  try {
+    if (window._FB && window._FB.db && window._FB.setDoc && window._FB.doc) {
+      const ref = window._FB.doc(window._FB.db, "trips", "gokarna");
+      fbDocRef = ref;
+      await window._FB.setDoc(ref, { itinerary, checklist, updatedAt }, { merge: true });
+    }
+  } catch (err) {
+    console.warn('Failed to save checklist to Firestore, falling back to localStorage', err);
+  }
+
   renderChecklist();
   updateChecklistProgressStat();
+}
+
+// Start listening to Firestore shared doc (if initialized)
+function startFirestoreSync() {
+  try {
+    if (!window._FB || !window._FB.db || !window._FB.onSnapshot || !window._FB.doc) return;
+
+    const ref = window._FB.doc(window._FB.db, "trips", "gokarna");
+    fbDocRef = ref;
+    window._FB.onSnapshot(ref, (snapshot) => {
+      if (!snapshot.exists) {
+        // create doc from local state
+        window._FB.setDoc(ref, { itinerary, checklist, updatedAt: Date.now() }, { merge: true }).catch(() => {});
+        return;
+      }
+
+      const data = snapshot.data();
+      const remoteUpdated = data?.updatedAt || 0;
+      // ignore updates we just wrote locally
+      if (remoteUpdated && remoteUpdated <= lastLocalUpdate) return;
+
+      if (data?.itinerary) {
+        itinerary = data.itinerary;
+        try { localStorage.setItem("gokarna_itinerary_data", JSON.stringify(itinerary)); } catch (e) {}
+      }
+      if (data?.checklist) {
+        checklist = data.checklist;
+        try { localStorage.setItem("gokarna_checklist_data", JSON.stringify(checklist)); } catch (e) {}
+      }
+
+      renderItinerary();
+      renderChecklist();
+      updateTotalExpenseStat();
+      updateChecklistProgressStat();
+    });
+  } catch (err) {
+    console.warn('Firestore sync not available', err);
+  }
 }
 
 // 2. Render Itinerary Timeline
@@ -563,6 +641,8 @@ function escapeHTML(str) {
 // Initialise App on page DOM ready
 window.addEventListener("DOMContentLoaded", () => {
   loadData();
+  // start Firestore live sync (if Firebase was initialized in the page)
+  startFirestoreSync();
   setupAppListeners();
   startCountdown();
   renderItinerary();

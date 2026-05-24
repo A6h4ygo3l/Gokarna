@@ -193,6 +193,30 @@
 
   <!-- Lucide Icons & App Script -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module">
+    // Firebase initialization for simple shared-trip sync (no auth)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6K-aGcXooAa-sN_0orl3AEUtSvEdu3ic",
+      authDomain: "gokarna-bhai.firebaseapp.com",
+      projectId: "gokarna-bhai",
+      storageBucket: "gokarna-bhai.firebasestorage.app",
+      messagingSenderId: "895509407330",
+      appId: "1:895509407330:web:9db40cbbe3ad278870533b"
+    };
+    
+    try {
+      const fbApp = initializeApp(firebaseConfig);
+      const db = getFirestore(fbApp);
+      // Expose db and helper functions to the app module via window
+      window._FB = { db, doc, setDoc, onSnapshot };
+    } catch (err) {
+      // Initialization failed (likely missing config) — app will fall back to localStorage
+      console.warn('Firebase init failed; running in local-only mode.', err);
+    }
+  </script>
   <script type="module" src="/app.js"></script>
 </body>
 </html>
